@@ -261,3 +261,58 @@ def wait(min_val, max_val, weight='wdMean'):
         time.sleep(round(normal_range_float(min_val, max_val)))
     elif weight == 'wdRight':
         time.sleep(round(truncated_gauss(max_val, min_val)))
+
+
+
+import tkinter as tk
+
+class RandomPointGUI:
+    def __init__(self, master):
+        self.master = master
+        self.canvas_width = 1000
+        self.canvas_height = 1000
+        self.canvas = tk.Canvas(self.master, width=self.canvas_width, height=self.canvas_height)
+        self.canvas.pack()
+
+        self.rect = TRectangle(TPoint(0, 0), TPoint(0, 800), TPoint(800, 800), TPoint(800, 0))  # Specify the rectangle dimensions
+
+        self.points = []  # List to store generated points
+
+        self.generate_button = tk.Button(self.master, text="Generate Random Points", command=self.generate_random_points)
+        self.generate_button.pack()
+
+        self.num_points_entry = tk.Entry(self.master)
+        self.num_points_entry.pack()
+        self.num_points_entry.insert(0, "10")  # Default number of points
+
+        self.draw_rectangle()  # Draw the rectangle initially
+
+    def generate_random_points(self):
+        num_points = int(self.num_points_entry.get())  # Get the specified number of points
+
+        for _ in range(num_points):
+            random_point = random_point_rectangle(self.rect)  # Generate random point within the rectangle
+            self.points.append(random_point)  # Add the point to the list
+
+        self.draw_points()
+
+    def draw_rectangle(self):
+        rect_coords = [
+            self.rect.Top.x, self.rect.Top.y,
+            self.rect.Right.x, self.rect.Right.y,
+            self.rect.Bottom.x, self.rect.Bottom.y,
+            self.rect.Left.x, self.rect.Left.y
+        ]
+        self.canvas.create_polygon(rect_coords, outline="green")
+
+    def draw_points(self):
+        self.canvas.delete("point")  # Clear previous points on canvas
+
+        for point in self.points:
+            x, y = point.x, point.y
+            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="red", tags="point")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = RandomPointGUI(root)
+    root.mainloop()
